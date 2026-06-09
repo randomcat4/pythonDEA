@@ -28,6 +28,7 @@ Current v3 model plugins:
 
 - `sbm`: slack-based measure DEA with CRS/VRS, orientation modes, undesirable
   outputs, peers, slacks, targets, and variable attributes inherited from v2.
+- `sbm_super_efficiency`: exclude-self SBM for ranking and sensitivity checks.
 - `sbm_malmquist`: adjacent-period SBM-Malmquist productivity decomposition
   with explainable underlying SBM solutions.
 

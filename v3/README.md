@@ -21,6 +21,8 @@ for row in result.table("efficiency").rows:
 
 - `sbm`: CRS/VRS slack-based measure DEA with non-oriented, input-oriented,
   output-oriented, and bad-output-adjusted orientations.
+- `sbm_super_efficiency`: exclude-self SBM for ranking and frontier sensitivity
+  checks.
 - `sbm_malmquist`: adjacent-period SBM-Malmquist decomposition over balanced
   panel data.
 

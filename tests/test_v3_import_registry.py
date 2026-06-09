@@ -34,7 +34,7 @@ class DummyEstimator:
 
 
 def test_v3_imports_default_models():
-    assert pythondea.__version__ == "0.3.0"
+    assert pythondea.__version__ == "3.0.0a2"
     names = [spec.name for spec in list_models()]
     assert "sbm" in names
     assert "sbm_malmquist" in names

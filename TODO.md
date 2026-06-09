@@ -129,19 +129,21 @@ pyDEA model matrix.
   error messages identify invalid columns, non-positive values, and panel gaps.
 - Completion: empirical scripts can build data objects from common research
   tables with explicit role metadata.
-- Status: next.
+- Status: first milestone implemented with cross-section and balanced-panel
+  DataFrame adapters plus missing/duplicate row checks.
 
 ### V3-P3: Frontier-Useful Model Extensions
 
 - Worth doing: non-radial directional distance functions, global/window
-  Malmquist-Luenberger indices with undesirable outputs, super-efficiency for
-  SBM ranking, bootstrap confidence intervals for DEA scores and productivity
-  changes, and robust/bias-corrected reporting.
+  Malmquist-Luenberger indices with undesirable outputs, bootstrap confidence
+  intervals for DEA scores and productivity changes, and robust/bias-corrected
+  reporting.
 - Why: these extensions support environmental, energy, productivity, and carbon
   efficiency papers better than a broad catalog of older radial variants.
 - Tests: small analytic examples, monotonicity checks, replication fixtures from
   published formulas, and seed-stable bootstrap intervals.
-- Status: planned after v3-P2.
+- Status: first milestone includes explicit `sbm_super_efficiency`; DDF,
+  Malmquist-Luenberger, and bootstrap remain planned.
 
 ### V3-P4: Publication Audit Layer
 

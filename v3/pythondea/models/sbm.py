@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from dataclasses import replace
 from typing import Literal
 
 from v2 import (
@@ -170,6 +171,32 @@ class SBMMalmquistEstimator:
         )
 
 
+@dataclass(frozen=True)
+class SBMSuperEfficiencyEstimator:
+    """Exclude-self SBM estimator for frontier ranking and sensitivity checks."""
+
+    returns_to_scale: ReturnsToScale = "crs"
+    orientation: SBMOrientation = "non_oriented"
+    reference_set: ReferenceSet | None = None
+    peer_tolerance: float = 1e-7
+    solver_backend: SolverBackend = SciPyHiGHSBackend()
+
+    model_name: str = "sbm_super_efficiency"
+
+    def fit(self, data: DEAData, *, context: FitContext | None = None) -> ModelResult:
+        base = SBMEstimator(
+            returns_to_scale=self.returns_to_scale,
+            orientation=self.orientation,
+            reference_set=self.reference_set,
+            exclude_self=True,
+            peer_tolerance=self.peer_tolerance,
+            solver_backend=self.solver_backend,
+        ).fit(data, context=context)
+        metadata = dict(base.metadata)
+        metadata["super_efficiency"] = True
+        return replace(base, model=self.model_name, metadata=metadata)
+
+
 def register_sbm_models(registry: ModelRegistry = DEFAULT_REGISTRY) -> None:
     """Register built-in SBM-family models idempotently."""
 
@@ -189,6 +216,15 @@ def register_sbm_models(registry: ModelRegistry = DEFAULT_REGISTRY) -> None:
             summary="Adjacent-period SBM-Malmquist productivity decomposition.",
             citation_hint="FGLR, RD, Zofio, and Pastor-Lovell Malmquist decompositions.",
             keywords=("dea", "sbm", "malmquist", "panel", "productivity"),
+        ),
+        ModelSpec(
+            name="sbm_super_efficiency",
+            estimator=SBMSuperEfficiencyEstimator,
+            family="dea",
+            summary="Exclude-self SBM for ranking efficient DMUs and sensitivity checks.",
+            citation_hint="Super-efficiency DEA extensions built on SBM reference exclusion.",
+            keywords=("dea", "sbm", "super-efficiency", "ranking"),
+            experimental=True,
         ),
     ):
         registry.register(spec, replace=True)

@@ -12,8 +12,14 @@ from .core.registry import (
 )
 from .core.results import ModelResult, ResultTable
 from .core.solver import SciPyHiGHSBackend, SolverBackend, SolverInfo
+from .dataframe import dea_from_dataframe, panel_from_dataframe
 from .frontier import fit
-from .models.sbm import SBMEstimator, SBMMalmquistEstimator, register_sbm_models
+from .models.sbm import (
+    SBMEstimator,
+    SBMMalmquistEstimator,
+    SBMSuperEfficiencyEstimator,
+    register_sbm_models,
+)
 
 register_sbm_models()
 
@@ -28,13 +34,16 @@ __all__ = [
     "ResultTable",
     "SBMEstimator",
     "SBMMalmquistEstimator",
+    "SBMSuperEfficiencyEstimator",
     "SciPyHiGHSBackend",
     "SolverBackend",
     "SolverInfo",
     "__version__",
+    "dea_from_dataframe",
     "fit",
     "get_model",
     "list_models",
+    "panel_from_dataframe",
     "register_model",
     "register_sbm_models",
 ]
