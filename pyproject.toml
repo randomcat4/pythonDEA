@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pythondea"
+version = "0.3.0"
+description = "Importable and extensible DEA/econometrics research package."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "pythonDEA contributors" }
+]
+dependencies = [
+  "numpy",
+  "scipy",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Scientific/Engineering",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+tables = ["pandas"]
+
+[project.entry-points."pythondea.models"]
+sbm = "pythondea.models.sbm:register_sbm_models"
+
+[tool.setuptools.packages.find]
+where = [".", "v3"]
+include = ["pythondea*", "v2*"]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "v3"]
+testpaths = ["tests"]

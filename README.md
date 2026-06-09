@@ -11,8 +11,29 @@ research-useful outputs:
 - Undesirable-output support for environmental, energy, and carbon studies.
 - Reference-set masks for period, global, grouped, and exclude-self frontiers.
 
-The first v2 milestone is a testable non-oriented SBM solver. Later milestones
-will add panel/global orchestration, variable attributes, weak disposability,
-and Malmquist integration.
+`v3/` is the importable research package layer. It keeps the tested v2 numerical
+core, then adds stable public APIs, model plugins, standard result tables, toy
+datasets, packaging metadata, and publication-oriented smoke tests.
+
+```python
+from pythondea import fit
+from pythondea.datasets import load_emissions_cross_section
+
+data = load_emissions_cross_section()
+result = fit("sbm", data, orientation="bad_output_adjusted")
+print(result.table("efficiency").rows)
+```
+
+Current v3 model plugins:
+
+- `sbm`: slack-based measure DEA with CRS/VRS, orientation modes, undesirable
+  outputs, peers, slacks, targets, and variable attributes inherited from v2.
+- `sbm_malmquist`: adjacent-period SBM-Malmquist productivity decomposition
+  with explainable underlying SBM solutions.
+
+The v3 roadmap is deliberately research-first. Near-term work should deepen
+frontier, environmental, panel, uncertainty, and decomposition functionality.
+Classic pyDEA-style GUI/template parity and broad radial DEA model matrices are
+not near-term goals.
 
 See [TODO.md](TODO.md) for the staged v2 implementation plan.

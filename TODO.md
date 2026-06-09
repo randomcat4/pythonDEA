@@ -1,8 +1,8 @@
-# pythonDEA v2 TODO
+# pythonDEA TODO
 
-This roadmap follows the GPT-5.5 Pro review: keep v1 frozen and build v2 around
-the existing SBM-Malmquist research line instead of cloning the classic pyDEA
-model matrix.
+This roadmap follows the GPT-5.5 Pro review direction: keep v1 frozen and build
+around the existing SBM-Malmquist research line instead of cloning the classic
+pyDEA model matrix.
 
 ## P0: Migration Freeze
 
@@ -89,3 +89,77 @@ model matrix.
   models in this scope.
 - Do not rewrite or mutate v1 algorithms.
 - Do not break v1 result compatibility for the sake of a unified interface.
+
+## v3: Importable, Pluggable Research Package
+
+### V3-P0: Package And Plugin Contract
+
+- Goal: make `pythondea` importable after install and usable directly from
+  Python.
+- Files: `pyproject.toml`, `v3/pythondea/**`, `tests/test_v3_import_registry.py`.
+- API: `fit`, `ModelRegistry`, `ModelSpec`, `ModelResult`, `ResultTable`,
+  `Estimator`, `SolverBackend`, `DEAData`, `PanelDEAData`.
+- Tests: import package, list built-in models, register a third-party style
+  model spec, and run it through `fit`.
+- Completion: external models can plug into the registry without editing core
+  package files.
+- Status: implemented in v3 alpha.
+
+### V3-P1: Stable SBM Research Estimators
+
+- Goal: expose v2 SBM and SBM-Malmquist through stable estimator plugins and
+  standard result tables.
+- Files: `v3/pythondea/models/sbm.py`, `v3/pythondea/datasets.py`,
+  `tests/test_v3_sbm_estimators.py`.
+- API: `fit("sbm", data, ...)`, `fit("sbm_malmquist", panel, ...)`,
+  `SBMEstimator`, `SBMMalmquistEstimator`.
+- Tests: preserve v2 score semantics, return efficiency/slack/target tables,
+  return Malmquist decomposition rows, and reject wrong data grains.
+- Completion: v3 is importable and the current research line is available from
+  one stable API.
+- Status: implemented in v3 alpha.
+
+### V3-P2: Publishable Data Interfaces
+
+- Goal: accept richer research data without tying the core to Excel templates.
+- Worth doing: pandas DataFrame adapters, formula-like column role specs,
+  balanced/unbalanced panel validation, grouped frontiers, missing-value policy,
+  deterministic provenance/fingerprints.
+- Tests: round-trip arrays/DataFrames into identical model results; verify
+  error messages identify invalid columns, non-positive values, and panel gaps.
+- Completion: empirical scripts can build data objects from common research
+  tables with explicit role metadata.
+- Status: next.
+
+### V3-P3: Frontier-Useful Model Extensions
+
+- Worth doing: non-radial directional distance functions, global/window
+  Malmquist-Luenberger indices with undesirable outputs, super-efficiency for
+  SBM ranking, bootstrap confidence intervals for DEA scores and productivity
+  changes, and robust/bias-corrected reporting.
+- Why: these extensions support environmental, energy, productivity, and carbon
+  efficiency papers better than a broad catalog of older radial variants.
+- Tests: small analytic examples, monotonicity checks, replication fixtures from
+  published formulas, and seed-stable bootstrap intervals.
+- Status: planned after v3-P2.
+
+### V3-P4: Publication Audit Layer
+
+- Goal: make results defensible in a paper appendix.
+- Worth doing: solver status audit, infeasible-DMU report, dual/frontier
+  diagnostics where available, peer stability summaries, citation metadata,
+  result serialization, exact configuration capture, repository license choice,
+  and CI evidence.
+- Tests: failed LPs propagate as partial results; serialized results preserve
+  all configuration and table data.
+- Status: planned.
+
+### V3 Non-Goals
+
+- No frontend or GUI parity.
+- No full clone of pyDEA's classic CCR/BCC/additive model matrix unless a
+  specific research extension needs it.
+- No Excel-template-first workflow before the Python API is stable.
+- No stochastic frontier analysis in the DEA package core.
+- No broad "all DEA models" promise; v3 should deepen the publishable
+  SBM/environmental/panel line first.
