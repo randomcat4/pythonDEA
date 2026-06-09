@@ -29,3 +29,4 @@ class SBMSolution:
     good_output_targets: dict[str, float]
     bad_output_targets: dict[str, float]
     transform_t: float | None
+    variable_attributes: dict[str, dict[str, str | bool]]

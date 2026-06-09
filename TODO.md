@@ -51,6 +51,8 @@ model matrix.
 - Completion: each variable attribute is reflected in LP construction and
   result metadata.
 - Push: yes.
+- Status: first milestone implemented with variable specs, non-controllable
+  slack fixing, weak-disposability slack fixing, and result metadata.
 
 ## P4: SBM Orientation Variants
 

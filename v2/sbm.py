@@ -68,7 +68,18 @@ def solve_sbm(
     y0 = data.good_outputs[dmu_index]
     b0 = None if data.bad_outputs is None else data.bad_outputs[dmu_index]
 
-    lp = _build_nonoriented_sbm_lp(x_ref, y_ref, b_ref, x0, y0, b0, returns_to_scale)
+    lp = _build_nonoriented_sbm_lp(
+        x_ref,
+        y_ref,
+        b_ref,
+        x0,
+        y0,
+        b0,
+        returns_to_scale,
+        input_slack_active=np.array([spec.allows_slack for spec in data.input_specs], dtype=bool),
+        good_slack_active=np.array([spec.allows_slack for spec in data.good_output_specs], dtype=bool),
+        bad_slack_active=np.array([spec.allows_slack for spec in data.bad_output_specs], dtype=bool),
+    )
     result = optimize.linprog(
         c=lp["c"],
         A_eq=lp["A_eq"],
@@ -99,6 +110,9 @@ def _build_nonoriented_sbm_lp(
     y0: np.ndarray,
     b0: np.ndarray | None,
     returns_to_scale: ReturnsToScale,
+    input_slack_active: np.ndarray,
+    good_slack_active: np.ndarray,
+    bad_slack_active: np.ndarray,
 ) -> dict[str, object]:
     n_ref = x_ref.shape[1]
     n_inputs = x_ref.shape[0]
@@ -110,7 +124,7 @@ def _build_nonoriented_sbm_lp(
         raise ValueError("at least one desirable or undesirable output is required")
 
     lambda_block = np.zeros(n_ref)
-    input_obj = -1.0 / (n_inputs * x0)
+    input_obj = np.where(input_slack_active, -1.0 / (n_inputs * x0), 0.0)
     good_obj = np.zeros(n_good)
     bad_obj = np.zeros(n_bad)
     c = np.concatenate([lambda_block, input_obj, good_obj, bad_obj, np.array([1.0])])
@@ -143,11 +157,19 @@ def _build_nonoriented_sbm_lp(
         rhs.append(np.zeros(n_bad))
 
     norm = np.zeros(total_vars)
-    norm[n_ref + n_inputs : n_ref + n_inputs + n_good] = 1.0 / (output_count * y0)
+    norm[n_ref + n_inputs : n_ref + n_inputs + n_good] = np.where(
+        good_slack_active,
+        1.0 / (output_count * y0),
+        0.0,
+    )
     if n_bad:
         assert b0 is not None
         start = n_ref + n_inputs + n_good
-        norm[start : start + n_bad] = 1.0 / (output_count * b0)
+        norm[start : start + n_bad] = np.where(
+            bad_slack_active,
+            1.0 / (output_count * b0),
+            0.0,
+        )
     norm[-1] = 1.0
     blocks.append(norm.reshape(1, -1))
     rhs.append(np.array([1.0]))
@@ -163,8 +185,25 @@ def _build_nonoriented_sbm_lp(
         "c": c,
         "A_eq": np.vstack(blocks),
         "b_eq": np.concatenate(rhs),
-        "bounds": [(0.0, None)] * total_vars,
+        "bounds": _sbm_bounds(n_ref, input_slack_active, good_slack_active, bad_slack_active),
     }
+
+
+def _sbm_bounds(
+    n_ref: int,
+    input_slack_active: np.ndarray,
+    good_slack_active: np.ndarray,
+    bad_slack_active: np.ndarray,
+) -> list[tuple[float, float | None]]:
+    bounds: list[tuple[float, float | None]] = [(0.0, None)] * n_ref
+    for active in input_slack_active:
+        bounds.append((0.0, None if active else 0.0))
+    for active in good_slack_active:
+        bounds.append((0.0, None if active else 0.0))
+    for active in bad_slack_active:
+        bounds.append((0.0, None if active else 0.0))
+    bounds.append((0.0, None))
+    return bounds
 
 
 def _successful_solution(
@@ -229,6 +268,7 @@ def _successful_solution(
         good_output_targets=_zip_values(data.good_output_names, y0 + good_slacks),
         bad_output_targets=_zip_values(data.bad_output_names, b0 - bad_slacks),
         transform_t=t_value,
+        variable_attributes=_variable_attributes(data),
     )
 
 
@@ -257,8 +297,21 @@ def _failed_solution(
         good_output_targets={},
         bad_output_targets={},
         transform_t=None,
+        variable_attributes=_variable_attributes(data),
     )
 
 
 def _zip_values(names: list[str], values: np.ndarray) -> dict[str, float]:
     return {name: float(value) for name, value in zip(names, values)}
+
+
+def _variable_attributes(data: DEAData) -> dict[str, dict[str, str | bool]]:
+    return {
+        spec.name: {
+            "role": spec.role,
+            "controllable": spec.controllable,
+            "disposability": spec.disposability,
+            "allows_slack": spec.allows_slack,
+        }
+        for spec in data.variable_specs()
+    }

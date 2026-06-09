@@ -11,12 +11,14 @@ from .reference import (
 )
 from .result import SBMSolution
 from .sbm import solve_all_sbm, solve_sbm
+from .variables import VariableSpec
 
 __all__ = [
     "DEAData",
     "PanelDEAData",
     "ReferenceSet",
     "SBMSolution",
+    "VariableSpec",
     "contemporaneous_reference",
     "cross_period_reference",
     "global_reference",

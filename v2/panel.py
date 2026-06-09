@@ -30,6 +30,12 @@ class PanelDEAData:
         input_names: Sequence[str] | None = None,
         good_output_names: Sequence[str] | None = None,
         bad_output_names: Sequence[str] | None = None,
+        non_controllable_inputs: Sequence[str] | None = None,
+        non_controllable_good_outputs: Sequence[str] | None = None,
+        non_controllable_bad_outputs: Sequence[str] | None = None,
+        weakly_disposable_inputs: Sequence[str] | None = None,
+        weakly_disposable_good_outputs: Sequence[str] | None = None,
+        weakly_disposable_bad_outputs: Sequence[str] | None = None,
     ) -> "PanelDEAData":
         """Create a balanced panel from arrays shaped period x entity x variable."""
 
@@ -70,6 +76,12 @@ class PanelDEAData:
             input_names=input_names,
             good_output_names=good_output_names,
             bad_output_names=bad_output_names,
+            non_controllable_inputs=non_controllable_inputs,
+            non_controllable_good_outputs=non_controllable_good_outputs,
+            non_controllable_bad_outputs=non_controllable_bad_outputs,
+            weakly_disposable_inputs=weakly_disposable_inputs,
+            weakly_disposable_good_outputs=weakly_disposable_good_outputs,
+            weakly_disposable_bad_outputs=weakly_disposable_bad_outputs,
         )
         return cls(data=data, periods=period_labels, entities=entity_labels)
 
