@@ -1,6 +1,7 @@
 """Public API for pythonDEA v3."""
 
 from ._version import __version__
+from .audit import AuditCheck, PublicationAudit, audit_result, model_catalog
 from .core.data import DEAData, PanelDEAData
 from .core.estimator import Estimator, FitContext
 from .core.registry import (
@@ -24,6 +25,7 @@ from .models.sbm import (
 register_sbm_models()
 
 __all__ = [
+    "AuditCheck",
     "DEAData",
     "DEFAULT_REGISTRY",
     "Estimator",
@@ -31,6 +33,7 @@ __all__ = [
     "ModelResult",
     "ModelSpec",
     "PanelDEAData",
+    "PublicationAudit",
     "ResultTable",
     "SBMEstimator",
     "SBMMalmquistEstimator",
@@ -39,10 +42,12 @@ __all__ = [
     "SolverBackend",
     "SolverInfo",
     "__version__",
+    "audit_result",
     "dea_from_dataframe",
     "fit",
     "get_model",
     "list_models",
+    "model_catalog",
     "panel_from_dataframe",
     "register_model",
     "register_sbm_models",

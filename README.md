@@ -22,6 +22,7 @@ from pythondea.datasets import load_emissions_cross_section
 data = load_emissions_cross_section()
 result = fit("sbm", data, orientation="bad_output_adjusted")
 print(result.table("efficiency").rows)
+print(result.reproducibility_hash())
 ```
 
 Current v3 model plugins:
@@ -31,6 +32,9 @@ Current v3 model plugins:
 - `sbm_super_efficiency`: exclude-self SBM for ranking and sensitivity checks.
 - `sbm_malmquist`: adjacent-period SBM-Malmquist productivity decomposition
   with explainable underlying SBM solutions.
+
+`audit_result(result)` provides a publication-readiness checklist for solver
+metadata, result tables, version metadata, and deterministic result hashes.
 
 The v3 roadmap is deliberately research-first. Near-term work should deepen
 frontier, environmental, panel, uncertainty, and decomposition functionality.

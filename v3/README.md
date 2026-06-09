@@ -33,6 +33,11 @@ needs a `fit(data, *, context=None)` method returning `ModelResult`. Publication
 metadata should include solver information; the built-in SBM plugins report the
 current SciPy HiGHS backend.
 
+Use `audit_result(result)` before publishing a table. It checks solver metadata,
+primary table integrity, package version metadata, and deterministic result
+hashes. The repository example `examples/v3_sbm_malmquist_reproduction.py` is a
+plain Python reproduction smoke test.
+
 ```python
 from pythondea import ModelResult, ModelSpec, ResultTable, register_model
 

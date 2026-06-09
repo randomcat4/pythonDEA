@@ -154,7 +154,8 @@ pyDEA model matrix.
   and CI evidence.
 - Tests: failed LPs propagate as partial results; serialized results preserve
   all configuration and table data.
-- Status: planned.
+- Status: first milestone implemented with `audit_result`, `model_catalog`, JSON
+  serialization, reproducibility hashes, and a runnable SBM-Malmquist example.
 
 ### V3 Non-Goals
 
