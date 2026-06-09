@@ -7,6 +7,8 @@ from typing import Iterable
 
 import numpy as np
 
+from .panel import PanelDEAData
+
 
 @dataclass(frozen=True)
 class ReferenceSet:
@@ -38,3 +40,37 @@ class ReferenceSet:
         if np.any(array < 0) or np.any(array >= n_dmus):
             raise ValueError("reference set index out of bounds")
         return array
+
+
+def contemporaneous_reference(panel: PanelDEAData, period: str | int) -> ReferenceSet:
+    """Reference frontier containing all entities in one period."""
+
+    label = str(period)
+    return ReferenceSet(panel.period_indices(label), f"period:{label}")
+
+
+def global_reference(panel: PanelDEAData) -> ReferenceSet:
+    """Reference frontier containing all periods and all entities."""
+
+    return ReferenceSet.all(panel.data.n_dmus, "global")
+
+
+def cross_period_reference(panel: PanelDEAData, reference_period: str | int) -> ReferenceSet:
+    """Reference frontier from another period for cross-period efficiency."""
+
+    label = str(reference_period)
+    return ReferenceSet(panel.period_indices(label), f"cross-period:{label}")
+
+
+def window_reference(
+    panel: PanelDEAData,
+    start_period: str | int,
+    end_period: str | int,
+) -> ReferenceSet:
+    """Reference frontier spanning a closed range of periods."""
+
+    periods = panel.periods_between(start_period, end_period)
+    indices: list[int] = []
+    for period in periods:
+        indices.extend(panel.period_indices(period))
+    return ReferenceSet(tuple(indices), f"window:{periods[0]}:{periods[-1]}")

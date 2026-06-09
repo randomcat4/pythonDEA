@@ -38,6 +38,8 @@ model matrix.
 - Completion: FGLR, RD, Zofio, and PL decompositions can reuse the same solver
   by swapping reference sets.
 - Push: yes.
+- Status: first milestone implemented with balanced panel flattening and
+  contemporaneous, global, cross-period, and closed-window references.
 
 ## P3: Variable Attribute Layer
 
