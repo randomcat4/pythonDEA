@@ -76,6 +76,9 @@ model matrix.
   slacks, peers, and targets to outputs.
 - Completion: v1-compatible indices plus v2 explanation fields.
 - Push: yes, then tag `v2-sbm-malmquist-alpha`.
+- Status: first alpha implemented with pure v1-compatible decomposition
+  formulas and adjacent-panel orchestration retaining explainable `SBMSolution`
+  objects.
 
 ## Explicit Non-Goals
 
