@@ -7,6 +7,7 @@ from typing import Literal
 import numpy as np
 from scipy import optimize
 
+from .orientation import SBMOrientation
 from .problem import DEAData
 from .reference import ReferenceSet
 from .result import SBMSolution
@@ -18,6 +19,7 @@ def solve_all_sbm(
     data: DEAData,
     *,
     returns_to_scale: ReturnsToScale = "crs",
+    orientation: SBMOrientation = "non_oriented",
     reference_set: ReferenceSet | None = None,
     exclude_self: bool = False,
     peer_tolerance: float = 1e-7,
@@ -29,6 +31,7 @@ def solve_all_sbm(
             data,
             dmu_index,
             returns_to_scale=returns_to_scale,
+            orientation=orientation,
             reference_set=reference_set,
             exclude_self=exclude_self,
             peer_tolerance=peer_tolerance,
@@ -42,6 +45,7 @@ def solve_sbm(
     dmu_index: int,
     *,
     returns_to_scale: ReturnsToScale = "crs",
+    orientation: SBMOrientation = "non_oriented",
     reference_set: ReferenceSet | None = None,
     exclude_self: bool = False,
     peer_tolerance: float = 1e-7,
@@ -54,6 +58,8 @@ def solve_sbm(
 
     if returns_to_scale not in ("crs", "vrs"):
         raise ValueError("returns_to_scale must be 'crs' or 'vrs'")
+    if orientation not in ("non_oriented", "input", "output", "bad_output_adjusted"):
+        raise ValueError("unexpected SBM orientation")
     if dmu_index < 0 or dmu_index >= data.n_dmus:
         raise ValueError("dmu_index out of bounds")
 
@@ -68,6 +74,7 @@ def solve_sbm(
     y0 = data.good_outputs[dmu_index]
     b0 = None if data.bad_outputs is None else data.bad_outputs[dmu_index]
 
+    input_active, good_active, bad_active = _orientation_slack_masks(data, orientation)
     lp = _build_nonoriented_sbm_lp(
         x_ref,
         y_ref,
@@ -76,9 +83,9 @@ def solve_sbm(
         y0,
         b0,
         returns_to_scale,
-        input_slack_active=np.array([spec.allows_slack for spec in data.input_specs], dtype=bool),
-        good_slack_active=np.array([spec.allows_slack for spec in data.good_output_specs], dtype=bool),
-        bad_slack_active=np.array([spec.allows_slack for spec in data.bad_output_specs], dtype=bool),
+        input_slack_active=input_active,
+        good_slack_active=good_active,
+        bad_slack_active=bad_active,
     )
     result = optimize.linprog(
         c=lp["c"],
@@ -89,12 +96,13 @@ def solve_sbm(
     )
 
     if not result.success:
-        return _failed_solution(data, dmu_index, returns_to_scale, effective_reference.label, result)
+        return _failed_solution(data, dmu_index, returns_to_scale, orientation, effective_reference.label, result)
 
     return _successful_solution(
         data=data,
         dmu_index=dmu_index,
         returns_to_scale=returns_to_scale,
+        orientation=orientation,
         reference=effective_reference,
         ref_idx=ref_idx,
         result=result,
@@ -211,6 +219,7 @@ def _successful_solution(
     data: DEAData,
     dmu_index: int,
     returns_to_scale: ReturnsToScale,
+    orientation: SBMOrientation,
     reference: ReferenceSet,
     ref_idx: np.ndarray,
     result: optimize.OptimizeResult,
@@ -255,6 +264,7 @@ def _successful_solution(
         dmu_name=data.dmu_names[dmu_index],
         score=float(result.fun),
         returns_to_scale=returns_to_scale,
+        orientation=orientation,
         reference_label=reference.label,
         success=True,
         status=int(result.status),
@@ -276,6 +286,7 @@ def _failed_solution(
     data: DEAData,
     dmu_index: int,
     returns_to_scale: ReturnsToScale,
+    orientation: SBMOrientation,
     reference_label: str,
     result: optimize.OptimizeResult,
 ) -> SBMSolution:
@@ -284,6 +295,7 @@ def _failed_solution(
         dmu_name=data.dmu_names[dmu_index],
         score=None,
         returns_to_scale=returns_to_scale,
+        orientation=orientation,
         reference_label=reference_label,
         success=False,
         status=int(result.status),
@@ -303,6 +315,25 @@ def _failed_solution(
 
 def _zip_values(names: list[str], values: np.ndarray) -> dict[str, float]:
     return {name: float(value) for name, value in zip(names, values)}
+
+
+def _orientation_slack_masks(
+    data: DEAData,
+    orientation: SBMOrientation,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    input_allowed = np.array([spec.allows_slack for spec in data.input_specs], dtype=bool)
+    good_allowed = np.array([spec.allows_slack for spec in data.good_output_specs], dtype=bool)
+    bad_allowed = np.array([spec.allows_slack for spec in data.bad_output_specs], dtype=bool)
+
+    if orientation == "non_oriented":
+        return input_allowed, good_allowed, bad_allowed
+    if orientation == "input":
+        return input_allowed, np.zeros_like(good_allowed), np.zeros_like(bad_allowed)
+    if orientation == "output":
+        return np.zeros_like(input_allowed), good_allowed, np.zeros_like(bad_allowed)
+    if orientation == "bad_output_adjusted":
+        return np.zeros_like(input_allowed), np.zeros_like(good_allowed), bad_allowed
+    raise ValueError("unexpected SBM orientation")
 
 
 def _variable_attributes(data: DEAData) -> dict[str, dict[str, str | bool]]:

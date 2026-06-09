@@ -64,6 +64,8 @@ model matrix.
 - Completion: callers can switch orientation while keeping the same data and
   result shape.
 - Push: yes.
+- Status: first milestone implemented with stable `orientation` API and tested
+  input, output, and bad-output-adjusted slack masks.
 
 ## P5: v2 SBM-Malmquist Integration
 

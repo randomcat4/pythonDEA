@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+from .orientation import SBMOrientation
+
 ReturnsToScale = Literal["crs", "vrs"]
 
 
@@ -16,6 +18,7 @@ class SBMSolution:
     dmu_name: str
     score: float | None
     returns_to_scale: ReturnsToScale
+    orientation: SBMOrientation
     reference_label: str
     success: bool
     status: int

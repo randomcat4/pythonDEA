@@ -1,6 +1,7 @@
 """pythonDEA v2 computational core."""
 
 from .data import DEAData
+from .orientation import SBMOrientation
 from .panel import PanelDEAData
 from .reference import (
     ReferenceSet,
@@ -18,6 +19,7 @@ __all__ = [
     "PanelDEAData",
     "ReferenceSet",
     "SBMSolution",
+    "SBMOrientation",
     "VariableSpec",
     "contemporaneous_reference",
     "cross_period_reference",
