@@ -38,3 +38,14 @@ def test_reproduction_example_runs_as_plain_python_script():
     assert len(summary["sbm_hash"]) == 64
     assert summary["sbm_audit_passed"] is True
     assert summary["malmquist_audit_passed"] is True
+
+
+def test_v4_green_productivity_example_runs_as_plain_python_script():
+    namespace = runpy.run_path("examples/v4_green_productivity_reproduction.py")
+    summary = namespace["run"]()
+
+    assert summary["ddf_rows"] == 2
+    assert summary["dirty_beta"] == 0.5
+    assert summary["ml_rows"] == 2
+    assert summary["ddf_audit_passed"] is True
+    assert summary["ml_audit_passed"] is True

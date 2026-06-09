@@ -34,10 +34,12 @@ class DummyEstimator:
 
 
 def test_v3_imports_default_models():
-    assert pythondea.__version__ == "3.0.0"
+    assert pythondea.__version__ == "4.0.0"
     names = [spec.name for spec in list_models()]
     assert "sbm" in names
     assert "sbm_malmquist" in names
+    assert "directional_distance" in names
+    assert "malmquist_luenberger" in names
     assert get_model("SBM").family == "dea"
     assert SciPyHiGHSBackend().info().method == "highs"
 

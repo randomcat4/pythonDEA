@@ -166,3 +166,42 @@ pyDEA model matrix.
 - No stochastic frontier analysis in the DEA package core.
 - No broad "all DEA models" promise; v3 should deepen the publishable
   SBM/environmental/panel line first.
+
+## v4: Directional Environmental Frontier Models
+
+### V4-P0: Directional Distance Function
+
+- Goal: add a publishable environmental DEA primitive that can contract inputs,
+  expand good outputs, and contract undesirable outputs along explicit
+  directions.
+- Files: `v2/ddf.py`, `v3/pythondea/models/ddf.py`,
+  `tests/test_v2_ddf.py`, `tests/test_v4_ddf_models.py`.
+- API: `solve_ddf`, `solve_all_ddf`, `fit("directional_distance", data,
+  direction="bad_output")`.
+- Result fields: `beta`, peers, reference label, solver status, and projected
+  input/good-output/bad-output targets.
+- Why v4 does this before CCR/BCC: DDF directly supports carbon, pollution, and
+  green productivity papers; CCR/BCC parity would mostly broaden an older model
+  matrix without improving the package's research contribution.
+- Status: implemented.
+
+### V4-P1: Malmquist-Luenberger Green Productivity
+
+- Goal: compute adjacent-period Malmquist-Luenberger transitions from DDF
+  distances for panels with undesirable outputs.
+- Files: `v2/ddf.py`, `v3/pythondea/models/ddf.py`,
+  `examples/v4_green_productivity_reproduction.py`.
+- API: `compute_adjacent_malmquist_luenberger` and
+  `fit("malmquist_luenberger", panel, direction="bad_output")`.
+- Result fields: `ml_index`, `efficiency_change`, `technical_change`, and the
+  four cross-period DDF distances.
+- Status: implemented.
+
+### V4 Non-Goals
+
+- No frontend, GUI, or Excel-template work.
+- No broad CCR/BCC/additive model catalog.
+- No network/dynamic SBM until DDF and Malmquist-Luenberger have stronger
+  replication fixtures.
+- No bootstrap confidence intervals in v4. They remain valuable, but should be
+  implemented as a separate inference layer after model equations are stable.

@@ -15,6 +15,11 @@ from .core.results import ModelResult, ResultTable
 from .core.solver import SciPyHiGHSBackend, SolverBackend, SolverInfo
 from .dataframe import dea_from_dataframe, panel_from_dataframe
 from .frontier import fit
+from .models.ddf import (
+    DirectionalDistanceEstimator,
+    MalmquistLuenbergerEstimator,
+    register_ddf_models,
+)
 from .models.sbm import (
     SBMEstimator,
     SBMMalmquistEstimator,
@@ -22,16 +27,19 @@ from .models.sbm import (
     register_sbm_models,
 )
 
+register_ddf_models()
 register_sbm_models()
 
 __all__ = [
     "AuditCheck",
     "DEAData",
     "DEFAULT_REGISTRY",
+    "DirectionalDistanceEstimator",
     "Estimator",
     "FitContext",
     "ModelResult",
     "ModelSpec",
+    "MalmquistLuenbergerEstimator",
     "PanelDEAData",
     "PublicationAudit",
     "ResultTable",
@@ -50,5 +58,6 @@ __all__ = [
     "model_catalog",
     "panel_from_dataframe",
     "register_model",
+    "register_ddf_models",
     "register_sbm_models",
 ]

@@ -11,9 +11,9 @@ research-useful outputs:
 - Undesirable-output support for environmental, energy, and carbon studies.
 - Reference-set masks for period, global, grouped, and exclude-self frontiers.
 
-`v3/` is the importable research package layer. It keeps the tested v2 numerical
-core, then adds stable public APIs, model plugins, standard result tables, toy
-datasets, packaging metadata, and publication-oriented smoke tests.
+`pythondea` is the importable research package layer. It keeps the tested v2
+numerical core, then adds stable public APIs, model plugins, standard result
+tables, toy datasets, packaging metadata, and publication-oriented smoke tests.
 
 ```python
 from pythondea import fit
@@ -25,20 +25,23 @@ print(result.table("efficiency").rows)
 print(result.reproducibility_hash())
 ```
 
-Current v3 model plugins:
+Current model plugins:
 
 - `sbm`: slack-based measure DEA with CRS/VRS, orientation modes, undesirable
   outputs, peers, slacks, targets, and variable attributes inherited from v2.
 - `sbm_super_efficiency`: exclude-self SBM for ranking and sensitivity checks.
 - `sbm_malmquist`: adjacent-period SBM-Malmquist productivity decomposition
   with explainable underlying SBM solutions.
+- `directional_distance`: v4 directional distance function for environmental
+  frontiers, including bad-output contraction directions.
+- `malmquist_luenberger`: v4 adjacent-period green productivity index based on
+  DDF distances.
 
 `audit_result(result)` provides a publication-readiness checklist for solver
 metadata, result tables, version metadata, and deterministic result hashes.
 
-The v3 roadmap is deliberately research-first. Near-term work should deepen
-frontier, environmental, panel, uncertainty, and decomposition functionality.
-Classic pyDEA-style GUI/template parity and broad radial DEA model matrices are
-not near-term goals.
+The roadmap is deliberately research-first. v4 deepens environmental frontier
+and panel productivity functionality instead of cloning classic CCR/BCC model
+matrices or adding a frontend.
 
-See [TODO.md](TODO.md) for the staged v2 implementation plan.
+See [TODO.md](TODO.md) for the staged implementation plan.

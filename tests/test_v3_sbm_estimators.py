@@ -11,7 +11,7 @@ def test_sbm_estimator_returns_standard_v3_tables():
 
     assert result.model == "sbm"
     assert result.status == "ok"
-    assert result.metadata["pythondea_version"] == "3.0.0"
+    assert result.metadata["pythondea_version"] == "4.0.0"
     assert result.metadata["solver_backend"]["method"] == "highs"
     assert [row["dmu"] for row in result.rows] == ["clean", "balanced", "dirty"]
     assert result.table("slacks").columns == ("dmu", "variable", "role", "slack")

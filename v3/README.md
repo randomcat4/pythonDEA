@@ -1,6 +1,6 @@
-# pythonDEA v3
+# pythonDEA v4
 
-v3 is the importable public package layer for pythonDEA. It wraps the tested v2
+v4 is the importable public package layer for pythonDEA. It wraps the tested v2
 computational core with stable model plugins, standard result tables, packaging,
 and small deterministic datasets for smoke tests and examples.
 
@@ -25,6 +25,10 @@ for row in result.table("efficiency").rows:
   checks.
 - `sbm_malmquist`: adjacent-period SBM-Malmquist decomposition over balanced
   panel data.
+- `directional_distance`: directional distance function DEA for environmental
+  frontiers.
+- `malmquist_luenberger`: adjacent-period green productivity index based on DDF
+  distances.
 
 ## Plugin Contract
 
@@ -66,8 +70,7 @@ register_model(
 
 ## Research Scope
 
-The v3 package should prioritize publishable computational depth: undesirable
-outputs, panel productivity decompositions, non-radial/directional frontiers,
-super-efficiency, and bootstrap or robustness layers. It should not chase GUI
-parity or a broad classic DEA toolbox unless a concrete research model requires
-that surface.
+The v4 package prioritizes publishable computational depth: undesirable outputs,
+panel productivity decompositions, and non-radial/directional frontiers. It
+should not chase GUI parity or a broad classic DEA toolbox unless a concrete
+research model requires that surface.
